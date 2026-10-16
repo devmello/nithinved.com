@@ -5,15 +5,12 @@ import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react'
 import { ModelViewer } from './model-viewer'
 import { Shot } from './primitives'
 import { withBasePath } from '@/lib/base-path'
+import type { Model, Photo, Video, YouTube } from '@/lib/content'
 import { cn } from '@/lib/utils'
 
 const iconButton =
   'flex size-8 items-center justify-center rounded-full border border-border bg-background/70 text-muted-foreground backdrop-blur-md transition-colors hover:text-foreground'
 
-export type Video = { src: string; poster: string; caption: string }
-export type YouTube = { id: string; title: string; caption: string }
-export type Photo = { src: string; alt: string; caption: string }
-export type Model = { src: string; caption: string }
 type View = 'demo' | 'match' | 'cad' | 'image'
 
 // Square media slot: an interactive CAD model, demo video(s), a competition match, then the image (or a small

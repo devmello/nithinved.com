@@ -71,3 +71,37 @@
     scroll-behavior: auto;
   }
 }
+
+/* The plain-text /ai page for agents: ordinary document styles, which Tailwind's reset removes. */
+@layer components {
+  .ai h1 {
+    @apply mb-4 text-3xl font-medium tracking-tight;
+  }
+  .ai h2 {
+    @apply mt-12 mb-3 text-xl font-medium tracking-tight;
+  }
+  .ai h3 {
+    @apply mt-7 mb-2 font-medium;
+  }
+  .ai p {
+    @apply mb-3;
+  }
+  .ai ul {
+    @apply mb-3 list-disc pl-5;
+  }
+  .ai li {
+    @apply mb-1.5;
+  }
+  .ai a {
+    @apply break-words underline decoration-border underline-offset-4 transition-colors hover:decoration-signal;
+  }
+  .ai dl {
+    @apply grid gap-x-5 gap-y-1 sm:grid-cols-[9rem_minmax(0,1fr)];
+  }
+  .ai dt {
+    @apply text-muted-foreground;
+  }
+  .ai dd {
+    @apply mb-2 sm:mb-0;
+  }
+}

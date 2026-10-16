@@ -2,77 +2,10 @@
 
 import { useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { ProjectMedia, type Model, type Video, type YouTube } from './project-media'
+import { ProjectMedia } from './project-media'
 import { Scramble } from './scramble'
+import { robots } from '@/lib/content'
 import { cn } from '@/lib/utils'
-
-type Robot = {
-  src: string
-  alt: string
-  caption: string
-  model?: Model
-  videos?: Video[]
-  youtube?: YouTube
-  title: string
-  meta: string
-  team: string
-  note: string
-}
-
-const robots: Robot[] = [
-  {
-    src: '/work/cupid-robot.jpg',
-    alt: 'Render of Cupid, with its turret shooter, spindexer and roller intake',
-    caption: 'Team render of Cupid from the MKII DECODE engineering portfolio.',
-    model: { src: '/models/cupid.glb', caption: 'Cupid’s full CAD assembly, the version that ran at regionals.' },
-    videos: [
-      {
-        src: '/work/cupid-demo.mp4',
-        poster: '/work/cupid-demo.jpg',
-        caption: 'Close-up of the spindexer feeding purple and green artifacts up to the turret shooter.',
-      },
-    ],
-    title: 'Cupid',
-    meta: '2025–26',
-    team: 'MKII FTC 26216',
-    note: '“No misses, just kisses.” A passive spindexer that indexes artifacts for any motif, a gear-train turret with an adjustable hood, and shooting on the move with OpenCV artifact detection.',
-  },
-  {
-    src: '/work/cobra-robot.jpg',
-    alt: 'Render of the Cobra, with its arm and claw folded over the drivetrain',
-    caption: 'Team render of the Cobra from the Innov8rz engineering portfolio.',
-    youtube: {
-      id: 'W_z9L4mETQY',
-      title: 'MTI 2024 · Finals 2',
-      caption: 'Finals Match 2 at the 2024 Maryland Tech Invitational, from the Innov8rz YouTube channel.',
-    },
-    title: 'Cobra',
-    meta: '2023–24',
-    team: 'Innov8rz FTC 11039',
-    note: '“Strike with precision.” Max solo score of 246, with a constant-force-spring drone launcher, a lead-screw hang and a three-joint arm with a smart claw.',
-  },
-  {
-    src: '/work/purple-emperor-robot.jpg',
-    alt: 'Render of Purple Emperor, with its linear-slide outtake and arm',
-    caption: 'Team render of Purple Emperor from the MKII INTO THE DEEP engineering portfolio.',
-    videos: [
-      {
-        src: '/work/purple-emperor-demo-1.mp4',
-        poster: '/work/purple-emperor-demo-1.jpg',
-        caption: 'Practice run on the team’s field, picking up yellow samples.',
-      },
-      {
-        src: '/work/purple-emperor-demo-2.mp4',
-        poster: '/work/purple-emperor-demo-2.jpg',
-        caption: 'Overhead view of a practice run, scoring samples into the basket.',
-      },
-    ],
-    title: 'Purple Emperor',
-    meta: '2024–25',
-    team: 'MKII FTC 26216',
-    note: '“Fly like a butterfly, sting like a bee.” Max solo score of 242, first qualifier as winning alliance captain and 3rd Inspire, on an aluminum and polycarbonate drivetrain with three odometry pods.',
-  },
-]
 
 export function Work() {
   const trackRef = useRef<HTMLDivElement>(null)

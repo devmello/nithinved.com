@@ -1,4 +1,5 @@
 import { Scramble } from './scramble'
+import { site } from '@/lib/content'
 
 export function Hero() {
   return (
@@ -9,14 +10,13 @@ export function Hero() {
       >
         <Scramble
           text={[
-            { text: 'Nithin Vedagarbha' },
-            { text: ' Portfolio', className: 'block text-muted-foreground' },
+            { text: site.name },
+            { text: ` ${site.heading}`, className: 'block text-muted-foreground' },
           ]}
         />
       </h1>
       <p className="mt-6 font-mono text-xs text-muted-foreground">
-        Robotics Engineering, UC Santa Cruz <span className="text-signal">/</span> Selected work
-        2023–2026
+        {site.subline} <span className="text-signal">/</span> {site.span}
       </p>
     </section>
   )
