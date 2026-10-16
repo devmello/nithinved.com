@@ -13,7 +13,8 @@ const projects = [
   },
   {
     src: '/work/helmet.png',
-    video: { src: '/work/helmet-demo.mp4', poster: '/work/helmet-demo.jpg' },
+    videos: [{ src: '/work/helmet-demo.mp4', poster: '/work/helmet-demo.jpg' }],
+    imageLabel: 'Image',
     alt: 'Football helmet with an embedded impact-sensing circuit board',
     title: 'Instrumented helmet',
     meta: 'Field tested',
@@ -47,7 +48,7 @@ export function Projects() {
               <p className="max-w-sm text-pretty leading-relaxed text-muted-foreground">{p.note}</p>
             </div>
             <div className="order-1 md:order-2">
-              <ProjectMedia src={p.src} alt={p.alt} model={p.model} video={p.video} title={p.title} />
+              <ProjectMedia src={p.src} alt={p.alt} model={p.model} videos={p.videos} imageLabel={p.imageLabel} title={p.title} />
             </div>
           </article>
         ))}

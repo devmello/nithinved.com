@@ -22,3 +22,6 @@ next-env.d.ts
 
 # Raw CAD exports (the .obj files exceed GitHub's 100 MB limit; the site uses public/models/*.glb)
 /nithin/
+
+# Source photos and videos from the FTC engineering portfolios (the site uses converted copies in public/work)
+/FTC Portfolio/

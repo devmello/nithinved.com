@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { ProjectMedia } from './project-media'
+import { ProjectMedia, type Video } from './project-media'
 import { Scramble } from './scramble'
 import { cn } from '@/lib/utils'
 
@@ -10,6 +10,7 @@ type Robot = {
   src: string
   alt: string
   model?: string
+  videos?: Video[]
   title: string
   meta: string
   team: string
@@ -18,29 +19,34 @@ type Robot = {
 
 const robots: Robot[] = [
   {
-    src: '/work/cupid.png',
+    src: '/work/cupid-robot.jpg',
     model: '/models/cupid.glb',
-    alt: 'Render of Cupid, a compact FTC robot with turret shooter, spindexer, and roller intake',
+    videos: [{ src: '/work/cupid-demo.mp4', poster: '/work/cupid-demo.jpg' }],
+    alt: 'Render of Cupid, with its turret shooter, spindexer and roller intake',
     title: 'Cupid',
-    meta: '2026',
+    meta: '2025–26',
     team: 'MKII FTC 26216',
-    note: 'Full robot CAD in 48 hours. Took the team from #4 to #1 in Northern California.',
+    note: '“No misses, just kisses.” A passive spindexer that indexes artifacts for any motif, a gear-train turret with an adjustable hood, and shooting on the move with OpenCV artifact detection.',
   },
   {
-    src: '/work/cobra.png',
-    alt: 'Render of the Cobra competition robot with linear slide lift',
+    src: '/work/cobra-robot.jpg',
+    alt: 'Render of the Cobra, with its arm and claw folded over the drivetrain',
     title: 'Cobra',
-    meta: '2021–24',
+    meta: '2023–24',
     team: 'Innov8rz FTC 11039',
-    note: 'Top 10 of 20,000+ teams worldwide.',
+    note: '“Strike with precision.” Max solo score of 246, with a constant-force-spring drone launcher, a lead-screw hang and a three-joint arm with a smart claw.',
   },
   {
-    src: '/work/purple-emperor.png',
-    alt: 'Exploded render of the Purple Emperor mecanum drivetrain',
+    src: '/work/purple-emperor-robot.jpg',
+    videos: [
+      { src: '/work/purple-emperor-demo-1.mp4', poster: '/work/purple-emperor-demo-1.jpg' },
+      { src: '/work/purple-emperor-demo-2.mp4', poster: '/work/purple-emperor-demo-2.jpg' },
+    ],
+    alt: 'Render of Purple Emperor, with its linear-slide outtake and arm',
     title: 'Purple Emperor',
-    meta: '2025',
-    team: 'MKII',
-    note: 'Drivetrain and platform study.',
+    meta: '2024–25',
+    team: 'MKII FTC 26216',
+    note: '“Fly like a butterfly, sting like a bee.” Max solo score of 242, first qualifier as winning alliance captain and 3rd Inspire, on an aluminum and polycarbonate drivetrain with three odometry pods.',
   },
 ]
 
@@ -100,7 +106,7 @@ export function Work() {
               <p className="max-w-sm text-pretty leading-relaxed text-muted-foreground">{r.note}</p>
             </div>
             <div className="order-1 md:order-2">
-              <ProjectMedia src={r.src} alt={r.alt} model={r.model} title={r.title} priority={i === 0} />
+              <ProjectMedia src={r.src} alt={r.alt} model={r.model} videos={r.videos} title={r.title} priority={i === 0} />
             </div>
           </article>
         ))}
