@@ -9,7 +9,7 @@ import { withBasePath } from '@/lib/base-path'
 import type { Model, Photo, Video, YouTube } from '@/lib/content'
 import { cn } from '@/lib/utils'
 
-const PHOTO_MS = 5000
+const PHOTO_MS = 4000
 const dotsPill = 'absolute bottom-3 left-3 rounded-full bg-black/40 px-2.5 py-[5px] backdrop-blur-md'
 
 const iconButton =
