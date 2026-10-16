@@ -8,9 +8,10 @@ import { withBasePath } from '@/lib/base-path'
 import { cn } from '@/lib/utils'
 
 export type Video = { src: string; poster: string }
-type View = 'demo' | 'cad' | 'image'
+export type YouTube = { id: string; title: string }
+type View = 'demo' | 'match' | 'cad' | 'image'
 
-// Square media slot: demo video(s), then an interactive CAD model, then the image — whichever exist,
+// Square media slot: demo video(s), a competition match, an interactive CAD model, then the image — whichever exist,
 // with a toggle between them. Each heavy view mounts the first time it's shown, then stays mounted.
 export function ProjectMedia({
   src,
@@ -18,6 +19,7 @@ export function ProjectMedia({
   title,
   model,
   videos,
+  youtube,
   imageLabel = 'Render',
   priority,
 }: {
@@ -26,11 +28,13 @@ export function ProjectMedia({
   title: string
   model?: string
   videos?: Video[]
+  youtube?: YouTube
   imageLabel?: string
   priority?: boolean
 }) {
   const views = [
     videos?.length ? (['demo', 'Demo'] as const) : null,
+    youtube ? (['match', 'Match'] as const) : null,
     model ? (['cad', '3D CAD'] as const) : null,
     ['image', imageLabel] as const,
   ].filter((v) => v !== null)
@@ -59,6 +63,7 @@ export function ProjectMedia({
       {videos?.length && opened.has('demo') ? (
         <DemoVideo videos={videos} label={`Demo video of ${title}`} className={slot('demo')} />
       ) : null}
+      {youtube && opened.has('match') ? <YouTubeEmbed video={youtube} className={slot('match')} /> : null}
       {model && opened.has('cad') ? (
         <ModelViewer src={model} label={`Interactive 3D CAD model of ${title}`} className={slot('cad')} />
       ) : null}
@@ -157,6 +162,43 @@ function DemoVideo({ videos, label, className }: { videos: Video[]; label: strin
       >
         {playing ? <Pause className="size-3.5" aria-hidden="true" /> : <Play className="size-3.5" aria-hidden="true" />}
       </button>
+    </div>
+  )
+}
+
+// Shows the video's thumbnail; the YouTube player itself loads only once it's clicked.
+function YouTubeEmbed({ video, className }: { video: YouTube; className?: string }) {
+  const [playing, setPlaying] = useState(false)
+
+  return (
+    <div className={cn('relative w-full overflow-hidden rounded-sm bg-black', className)}>
+      {playing ? (
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&playsinline=1`}
+          title={video.title}
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+          className="absolute inset-x-0 top-1/2 aspect-video w-full -translate-y-1/2"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPlaying(true)}
+          aria-label={`Play ${video.title} on YouTube`}
+          className="group absolute inset-0 size-full"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg`}
+            alt=""
+            loading="lazy"
+            className="size-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
+          />
+          <span className="absolute top-1/2 left-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-background/70 text-foreground backdrop-blur-md transition-transform group-hover:scale-105">
+            <Play className="size-5 translate-x-px" aria-hidden="true" />
+          </span>
+        </button>
+      )}
     </div>
   )
 }

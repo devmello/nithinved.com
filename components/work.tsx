@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { ProjectMedia, type Video } from './project-media'
+import { ProjectMedia, type Video, type YouTube } from './project-media'
 import { Scramble } from './scramble'
 import { cn } from '@/lib/utils'
 
@@ -11,6 +11,7 @@ type Robot = {
   alt: string
   model?: string
   videos?: Video[]
+  youtube?: YouTube
   title: string
   meta: string
   team: string
@@ -30,6 +31,7 @@ const robots: Robot[] = [
   },
   {
     src: '/work/cobra-robot.jpg',
+    youtube: { id: 'W_z9L4mETQY', title: 'MTI 2024 · Finals 2' },
     alt: 'Render of the Cobra, with its arm and claw folded over the drivetrain',
     title: 'Cobra',
     meta: '2023–24',
@@ -106,7 +108,7 @@ export function Work() {
               <p className="max-w-sm text-pretty leading-relaxed text-muted-foreground">{r.note}</p>
             </div>
             <div className="order-1 md:order-2">
-              <ProjectMedia src={r.src} alt={r.alt} model={r.model} videos={r.videos} title={r.title} priority={i === 0} />
+              <ProjectMedia src={r.src} alt={r.alt} model={r.model} videos={r.videos} youtube={r.youtube} title={r.title} priority={i === 0} />
             </div>
           </article>
         ))}
