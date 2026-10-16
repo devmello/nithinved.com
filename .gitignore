@@ -1,0 +1,28 @@
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.design-cache/
+.v0-trash/
+.vercel/
+
+# Environment variables
+.env*.local
+
+# Common ignores
+node_modules
+.next/
+.DS_Store
+next-env.d.ts
+*.tsbuildinfo
+.claude/
+# Static export (built by the GitHub Pages workflow)
+/out/
+
+# Raw CAD exports (the .obj files exceed GitHub's 100 MB limit; the site uses public/models/*.glb)
+/nithin/
+
+# Source photos and videos from the FTC engineering portfolios (the site uses converted copies in public/work)
+/FTC Portfolio/
+/new pics/
