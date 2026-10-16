@@ -216,7 +216,6 @@ export function ModelViewer({ src, label, className }: { src: string; label: str
       const size = box.getSize(new THREE.Vector3())
       model.position.sub(box.getCenter(new THREE.Vector3()))
       scene.add(model)
-      ;(window as any).__dbg = { ...((window as any).__dbg || {}), [src]: { scene, model, camera, controls, renderer, THREE, mark: () => (dirty = true) } } // DEBUG
 
       const radius = size.length() / 2
       const dist = (radius / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2))) * 0.95
