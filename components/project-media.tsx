@@ -10,17 +10,19 @@ import { cn } from '@/lib/utils'
 const iconButton =
   'flex size-8 items-center justify-center rounded-full border border-border bg-background/70 text-muted-foreground backdrop-blur-md transition-colors hover:text-foreground'
 
-export type Video = { src: string; poster: string }
-export type YouTube = { id: string; title: string }
-export type Photo = { src: string; alt: string }
+export type Video = { src: string; poster: string; caption: string }
+export type YouTube = { id: string; title: string; caption: string }
+export type Photo = { src: string; alt: string; caption: string }
+export type Model = { src: string; caption: string }
 type View = 'demo' | 'match' | 'cad' | 'image'
 
 // Square media slot: an interactive CAD model, demo video(s), a competition match, then the image (or a small
-// gallery when there are extra photos) — whichever exist,
-// with a toggle between them. Each heavy view mounts the first time it's shown, then stays mounted.
+// gallery when there are extra photos) — whichever exist, with a toggle between them and a caption underneath
+// for whatever is showing. Each heavy view mounts the first time it's shown, then stays mounted.
 export function ProjectMedia({
   src,
   alt,
+  caption,
   title,
   model,
   videos,
@@ -31,8 +33,9 @@ export function ProjectMedia({
 }: {
   src: string
   alt: string
+  caption: string
   title: string
-  model?: string
+  model?: Model
   videos?: Video[]
   youtube?: YouTube
   photos?: Photo[]
@@ -47,9 +50,24 @@ export function ProjectMedia({
   ].filter((v) => v !== null)
   const [view, setView] = useState<View>(views[0][0])
   const [opened, setOpened] = useState<Set<View>>(() => new Set([views[0][0]]))
+  const [clip, setClip] = useState(0)
+  const [photo, setPhoto] = useState(0)
+  const gallery = [{ src, alt, caption }, ...(photos ?? [])]
+
+  const captions: Record<View, string | undefined> = {
+    cad: model?.caption,
+    demo: videos?.[clip]?.caption,
+    match: youtube?.caption,
+    image: gallery[photo].caption,
+  }
+  const captionLine = (
+    <p aria-live="polite" className="mt-3 font-mono text-xs leading-relaxed text-muted-foreground">
+      {captions[view]}
+    </p>
+  )
 
   const shot = photos?.length ? (
-    <Gallery photos={[{ src, alt }, ...photos]} priority={priority && view === 'image'} />
+    <Gallery photos={gallery} index={photo} onIndex={setPhoto} priority={priority && view === 'image'} />
   ) : (
     <Shot
       src={src}
@@ -59,7 +77,13 @@ export function ProjectMedia({
       priority={priority && view === 'image'}
     />
   )
-  if (views.length === 1) return shot
+  if (views.length === 1)
+    return (
+      <div>
+        {shot}
+        {captionLine}
+      </div>
+    )
 
   const show = (next: View) => {
     setView(next)
@@ -68,47 +92,67 @@ export function ProjectMedia({
   const slot = (key: View) => cn('aspect-square', view !== key && 'hidden')
 
   return (
-    <div className="relative">
-      {videos?.length && opened.has('demo') ? (
-        <DemoVideo videos={videos} label={`Demo video of ${title}`} className={slot('demo')} />
-      ) : null}
-      {youtube && opened.has('match') ? <YouTubeEmbed video={youtube} className={slot('match')} /> : null}
-      {model && opened.has('cad') ? (
-        <ModelViewer src={model} label={`Interactive 3D CAD model of ${title}`} className={slot('cad')} />
-      ) : null}
-      {view === 'image' && shot}
-      <div
-        role="group"
-        aria-label="Media"
-        className="absolute top-3 right-3 flex rounded-full border border-border bg-background/70 p-0.5 font-mono text-xs backdrop-blur-md"
-      >
-        {views.map(([key, text]) => (
-          <button
-            key={key}
-            type="button"
-            aria-pressed={view === key}
-            onClick={() => show(key)}
-            className={cn(
-              'rounded-full px-3 py-1.5 transition-colors',
-              view === key ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground',
-            )}
-          >
-            {text}
-          </button>
-        ))}
+    <div>
+      <div className="relative">
+        {videos?.length && opened.has('demo') ? (
+          <DemoVideo
+            videos={videos}
+            index={clip}
+            onIndex={setClip}
+            label={`Demo video of ${title}`}
+            className={slot('demo')}
+          />
+        ) : null}
+        {youtube && opened.has('match') ? <YouTubeEmbed video={youtube} className={slot('match')} /> : null}
+        {model && opened.has('cad') ? (
+          <ModelViewer src={model.src} label={`Interactive 3D CAD model of ${title}`} className={slot('cad')} />
+        ) : null}
+        {view === 'image' && shot}
+        <div
+          role="group"
+          aria-label="Media"
+          className="absolute top-3 right-3 flex rounded-full border border-border bg-background/70 p-0.5 font-mono text-xs backdrop-blur-md"
+        >
+          {views.map(([key, text]) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={view === key}
+              onClick={() => show(key)}
+              className={cn(
+                'rounded-full px-3 py-1.5 transition-colors',
+                view === key ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              {text}
+            </button>
+          ))}
+        </div>
       </div>
+      {captionLine}
     </div>
   )
 }
 
 // Muted clips played back to back (looping), only while on screen, with a pause button.
 // Nothing downloads until the slot scrolls into view. Reduced motion starts it paused.
-function DemoVideo({ videos, label, className }: { videos: Video[]; label: string; className?: string }) {
+function DemoVideo({
+  videos,
+  index,
+  onIndex,
+  label,
+  className,
+}: {
+  videos: Video[]
+  index: number
+  onIndex: (index: number) => void
+  label: string
+  className?: string
+}) {
   const ref = useRef<HTMLVideoElement>(null)
   const heldRef = useRef(false) // paused by the viewer, so scrolling back doesn't restart it
   const visibleRef = useRef(false)
   const mountedRef = useRef(false)
-  const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const clip = videos[index]
 
@@ -142,7 +186,7 @@ function DemoVideo({ videos, label, className }: { videos: Video[]; label: strin
   // Picking a clip is a request to watch it, so it also lifts a manual pause.
   const go = (step: number) => {
     heldRef.current = false
-    setIndex((i) => (i + step + videos.length) % videos.length)
+    onIndex((index + step + videos.length) % videos.length)
   }
 
   const toggle = () => {
@@ -166,7 +210,7 @@ function DemoVideo({ videos, label, className }: { videos: Video[]; label: strin
         preload="none"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
-        onEnded={() => setIndex((i) => (i + 1) % videos.length)}
+        onEnded={() => onIndex((index + 1) % videos.length)}
         className="absolute inset-0 size-full object-cover"
       />
       {videos.length > 1 && (
@@ -231,10 +275,19 @@ function YouTubeEmbed({ video, className }: { video: YouTube; className?: string
 }
 
 // One photo at a time with previous/next buttons; each image loads only when it's shown.
-function Gallery({ photos, priority }: { photos: Photo[]; priority?: boolean }) {
-  const [index, setIndex] = useState(0)
+function Gallery({
+  photos,
+  index,
+  onIndex,
+  priority,
+}: {
+  photos: Photo[]
+  index: number
+  onIndex: (index: number) => void
+  priority?: boolean
+}) {
   const photo = photos[index]
-  const go = (step: number) => setIndex((i) => (i + step + photos.length) % photos.length)
+  const go = (step: number) => onIndex((index + step + photos.length) % photos.length)
 
   return (
     <div className="relative">

@@ -2,14 +2,15 @@
 
 import { useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { ProjectMedia, type Video, type YouTube } from './project-media'
+import { ProjectMedia, type Model, type Video, type YouTube } from './project-media'
 import { Scramble } from './scramble'
 import { cn } from '@/lib/utils'
 
 type Robot = {
   src: string
   alt: string
-  model?: string
+  caption: string
+  model?: Model
   videos?: Video[]
   youtube?: YouTube
   title: string
@@ -21,9 +22,16 @@ type Robot = {
 const robots: Robot[] = [
   {
     src: '/work/cupid-robot.jpg',
-    model: '/models/cupid.glb',
-    videos: [{ src: '/work/cupid-demo.mp4', poster: '/work/cupid-demo.jpg' }],
     alt: 'Render of Cupid, with its turret shooter, spindexer and roller intake',
+    caption: 'Team render of Cupid from the MKII DECODE engineering portfolio.',
+    model: { src: '/models/cupid.glb', caption: 'Cupid’s full CAD assembly, the version that ran at regionals.' },
+    videos: [
+      {
+        src: '/work/cupid-demo.mp4',
+        poster: '/work/cupid-demo.jpg',
+        caption: 'Close-up of the spindexer feeding purple and green artifacts up to the turret shooter.',
+      },
+    ],
     title: 'Cupid',
     meta: '2025–26',
     team: 'MKII FTC 26216',
@@ -31,8 +39,13 @@ const robots: Robot[] = [
   },
   {
     src: '/work/cobra-robot.jpg',
-    youtube: { id: 'W_z9L4mETQY', title: 'MTI 2024 · Finals 2' },
     alt: 'Render of the Cobra, with its arm and claw folded over the drivetrain',
+    caption: 'Team render of the Cobra from the Innov8rz engineering portfolio.',
+    youtube: {
+      id: 'W_z9L4mETQY',
+      title: 'MTI 2024 · Finals 2',
+      caption: 'Finals Match 2 at the 2024 Maryland Tech Invitational, from the Innov8rz YouTube channel.',
+    },
     title: 'Cobra',
     meta: '2023–24',
     team: 'Innov8rz FTC 11039',
@@ -40,11 +53,20 @@ const robots: Robot[] = [
   },
   {
     src: '/work/purple-emperor-robot.jpg',
-    videos: [
-      { src: '/work/purple-emperor-demo-1.mp4', poster: '/work/purple-emperor-demo-1.jpg' },
-      { src: '/work/purple-emperor-demo-2.mp4', poster: '/work/purple-emperor-demo-2.jpg' },
-    ],
     alt: 'Render of Purple Emperor, with its linear-slide outtake and arm',
+    caption: 'Team render of Purple Emperor from the MKII INTO THE DEEP engineering portfolio.',
+    videos: [
+      {
+        src: '/work/purple-emperor-demo-1.mp4',
+        poster: '/work/purple-emperor-demo-1.jpg',
+        caption: 'Practice run on the team’s field, picking up yellow samples.',
+      },
+      {
+        src: '/work/purple-emperor-demo-2.mp4',
+        poster: '/work/purple-emperor-demo-2.jpg',
+        caption: 'Overhead view of a practice run, scoring samples into the basket.',
+      },
+    ],
     title: 'Purple Emperor',
     meta: '2024–25',
     team: 'MKII FTC 26216',
@@ -108,7 +130,16 @@ export function Work() {
               <p className="max-w-sm text-pretty leading-relaxed text-muted-foreground">{r.note}</p>
             </div>
             <div className="order-1 md:order-2">
-              <ProjectMedia src={r.src} alt={r.alt} model={r.model} videos={r.videos} youtube={r.youtube} title={r.title} priority={i === 0} />
+              <ProjectMedia
+                src={r.src}
+                alt={r.alt}
+                caption={r.caption}
+                model={r.model}
+                videos={r.videos}
+                youtube={r.youtube}
+                title={r.title}
+                priority={i === 0}
+              />
             </div>
           </article>
         ))}
