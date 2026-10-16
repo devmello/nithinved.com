@@ -303,26 +303,20 @@ function Gallery({
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [hovered, setHovered] = useState(false)
   const photo = photos[index]
   const go = (step: number) => onIndex((index + step + photos.length) % photos.length)
 
-  // Auto-advances only while on screen and not under the mouse.
+  // Auto-advances only while on screen.
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.5 })
+    const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting))
     io.observe(el)
     return () => io.disconnect()
   }, [])
 
   return (
-    <div
-      ref={ref}
-      onPointerEnter={(e) => e.pointerType === 'mouse' && setHovered(true)}
-      onPointerLeave={(e) => e.pointerType === 'mouse' && setHovered(false)}
-      className="relative"
-    >
+    <div ref={ref} className="relative">
       <Shot
         key={photo.src}
         src={photo.src}
@@ -339,7 +333,7 @@ function Gallery({
         label="Choose photo"
         itemLabel={(i) => `Photo ${i + 1} of ${photos.length}`}
         duration={PHOTO_MS}
-        paused={hovered || !visible}
+        paused={!visible}
         onDone={() => go(1)}
         className={dotsPill}
       />
