@@ -7,6 +7,9 @@ import { Shot } from './primitives'
 import { withBasePath } from '@/lib/base-path'
 import { cn } from '@/lib/utils'
 
+const iconButton =
+  'flex size-8 items-center justify-center rounded-full border border-border bg-background/70 text-muted-foreground backdrop-blur-md transition-colors hover:text-foreground'
+
 export type Video = { src: string; poster: string }
 export type YouTube = { id: string; title: string }
 export type Photo = { src: string; alt: string }
@@ -104,6 +107,7 @@ function DemoVideo({ videos, label, className }: { videos: Video[]; label: strin
   const ref = useRef<HTMLVideoElement>(null)
   const heldRef = useRef(false) // paused by the viewer, so scrolling back doesn't restart it
   const visibleRef = useRef(false)
+  const mountedRef = useRef(false)
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const clip = videos[index]
@@ -125,11 +129,21 @@ function DemoVideo({ videos, label, className }: { videos: Video[]; label: strin
     return () => io.disconnect()
   }, [])
 
-  // Keep playing across a clip change.
+  // Keep playing across a clip change (but not on first mount, which the observer handles).
   useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true
+      return
+    }
     const v = ref.current
-    if (v && index > 0 && visibleRef.current && !heldRef.current) v.play().catch(() => {})
+    if (v && visibleRef.current && !heldRef.current) v.play().catch(() => {})
   }, [index])
+
+  // Picking a clip is a request to watch it, so it also lifts a manual pause.
+  const go = (step: number) => {
+    heldRef.current = false
+    setIndex((i) => (i + step + videos.length) % videos.length)
+  }
 
   const toggle = () => {
     const v = ref.current
@@ -160,14 +174,21 @@ function DemoVideo({ videos, label, className }: { videos: Video[]; label: strin
           {String(index + 1).padStart(2, '0')} / {String(videos.length).padStart(2, '0')}
         </p>
       )}
-      <button
-        type="button"
-        onClick={toggle}
-        aria-label={playing ? 'Pause video' : 'Play video'}
-        className="absolute right-3 bottom-3 flex size-8 items-center justify-center rounded-full border border-border bg-background/70 text-muted-foreground backdrop-blur-md transition-colors hover:text-foreground"
-      >
-        {playing ? <Pause className="size-3.5" aria-hidden="true" /> : <Play className="size-3.5" aria-hidden="true" />}
-      </button>
+      <div className="absolute right-3 bottom-3 flex gap-2">
+        {videos.length > 1 && (
+          <button type="button" onClick={() => go(-1)} aria-label="Previous video" className={iconButton}>
+            <ChevronLeft className="size-4" aria-hidden="true" />
+          </button>
+        )}
+        <button type="button" onClick={toggle} aria-label={playing ? 'Pause video' : 'Play video'} className={iconButton}>
+          {playing ? <Pause className="size-3.5" aria-hidden="true" /> : <Play className="size-3.5" aria-hidden="true" />}
+        </button>
+        {videos.length > 1 && (
+          <button type="button" onClick={() => go(1)} aria-label="Next video" className={iconButton}>
+            <ChevronRight className="size-4" aria-hidden="true" />
+          </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -214,8 +235,6 @@ function Gallery({ photos, priority }: { photos: Photo[]; priority?: boolean }) 
   const [index, setIndex] = useState(0)
   const photo = photos[index]
   const go = (step: number) => setIndex((i) => (i + step + photos.length) % photos.length)
-  const button =
-    'flex size-8 items-center justify-center rounded-full border border-border bg-background/70 text-muted-foreground backdrop-blur-md transition-colors hover:text-foreground'
 
   return (
     <div className="relative">
@@ -231,10 +250,10 @@ function Gallery({ photos, priority }: { photos: Photo[]; priority?: boolean }) 
         {String(index + 1).padStart(2, '0')} / {String(photos.length).padStart(2, '0')}
       </p>
       <div className="absolute right-3 bottom-3 flex gap-2">
-        <button type="button" onClick={() => go(-1)} aria-label="Previous photo" className={button}>
+        <button type="button" onClick={() => go(-1)} aria-label="Previous photo" className={iconButton}>
           <ChevronLeft className="size-4" aria-hidden="true" />
         </button>
-        <button type="button" onClick={() => go(1)} aria-label="Next photo" className={button}>
+        <button type="button" onClick={() => go(1)} aria-label="Next photo" className={iconButton}>
           <ChevronRight className="size-4" aria-hidden="true" />
         </button>
       </div>
