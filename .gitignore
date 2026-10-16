@@ -25,3 +25,4 @@ next-env.d.ts
 
 # Source photos and videos from the FTC engineering portfolios (the site uses converted copies in public/work)
 /FTC Portfolio/
+/new pics/

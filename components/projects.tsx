@@ -4,9 +4,15 @@ import { Scramble } from './scramble'
 
 const projects = [
   {
-    src: '/work/cube.png',
+    src: '/work/cube-rotator.jpg',
     model: '/models/rotator.glb',
-    alt: 'Prototype robot gripping a 4x4 Rubik’s cube',
+    videos: [{ src: '/work/cube-demo.mp4', poster: '/work/cube-demo.jpg' }],
+    photos: [
+      { src: '/work/cube-rotator-gears.jpg', alt: 'Underside of the rotator: five gears driving the ring that holds the cube' },
+      { src: '/work/cube-rotator-bench.jpg', alt: 'The purple 3D-printed rotator on a table, with a cube and a screwdriver nearby' },
+    ],
+    imageLabel: 'Photos',
+    alt: 'The 4×4 cube solver’s purple 3D-printed rotator, with three stepper motors on top',
     title: '4×4 cube solver',
     meta: 'In progress',
     note: 'Going after the robotic 4×4 world record.',
@@ -48,7 +54,7 @@ export function Projects() {
               <p className="max-w-sm text-pretty leading-relaxed text-muted-foreground">{p.note}</p>
             </div>
             <div className="order-1 md:order-2">
-              <ProjectMedia src={p.src} alt={p.alt} model={p.model} videos={p.videos} imageLabel={p.imageLabel} title={p.title} />
+              <ProjectMedia src={p.src} alt={p.alt} model={p.model} videos={p.videos} photos={p.photos} imageLabel={p.imageLabel} title={p.title} />
             </div>
           </article>
         ))}

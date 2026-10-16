@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Pause, Play } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react'
 import { ModelViewer } from './model-viewer'
 import { Shot } from './primitives'
 import { withBasePath } from '@/lib/base-path'
@@ -9,9 +9,11 @@ import { cn } from '@/lib/utils'
 
 export type Video = { src: string; poster: string }
 export type YouTube = { id: string; title: string }
+export type Photo = { src: string; alt: string }
 type View = 'demo' | 'match' | 'cad' | 'image'
 
-// Square media slot: demo video(s), a competition match, an interactive CAD model, then the image — whichever exist,
+// Square media slot: an interactive CAD model, demo video(s), a competition match, then the image (or a small
+// gallery when there are extra photos) — whichever exist,
 // with a toggle between them. Each heavy view mounts the first time it's shown, then stays mounted.
 export function ProjectMedia({
   src,
@@ -20,6 +22,7 @@ export function ProjectMedia({
   model,
   videos,
   youtube,
+  photos,
   imageLabel = 'Render',
   priority,
 }: {
@@ -29,19 +32,22 @@ export function ProjectMedia({
   model?: string
   videos?: Video[]
   youtube?: YouTube
+  photos?: Photo[]
   imageLabel?: string
   priority?: boolean
 }) {
   const views = [
+    model ? (['cad', '3D CAD'] as const) : null,
     videos?.length ? (['demo', 'Demo'] as const) : null,
     youtube ? (['match', 'Match'] as const) : null,
-    model ? (['cad', '3D CAD'] as const) : null,
     ['image', imageLabel] as const,
   ].filter((v) => v !== null)
   const [view, setView] = useState<View>(views[0][0])
   const [opened, setOpened] = useState<Set<View>>(() => new Set([views[0][0]]))
 
-  const shot = (
+  const shot = photos?.length ? (
+    <Gallery photos={[{ src, alt }, ...photos]} priority={priority && view === 'image'} />
+  ) : (
     <Shot
       src={src}
       alt={alt}
@@ -199,6 +205,39 @@ function YouTubeEmbed({ video, className }: { video: YouTube; className?: string
           </span>
         </button>
       )}
+    </div>
+  )
+}
+
+// One photo at a time with previous/next buttons; each image loads only when it's shown.
+function Gallery({ photos, priority }: { photos: Photo[]; priority?: boolean }) {
+  const [index, setIndex] = useState(0)
+  const photo = photos[index]
+  const go = (step: number) => setIndex((i) => (i + step + photos.length) % photos.length)
+  const button =
+    'flex size-8 items-center justify-center rounded-full border border-border bg-background/70 text-muted-foreground backdrop-blur-md transition-colors hover:text-foreground'
+
+  return (
+    <div className="relative">
+      <Shot
+        key={photo.src}
+        src={photo.src}
+        alt={photo.alt}
+        aspect="aspect-square"
+        sizes="(min-width: 768px) 55vw, 100vw"
+        priority={priority && index === 0}
+      />
+      <p className="pointer-events-none absolute bottom-5 left-4 font-mono text-xs text-foreground/80 tabular-nums">
+        {String(index + 1).padStart(2, '0')} / {String(photos.length).padStart(2, '0')}
+      </p>
+      <div className="absolute right-3 bottom-3 flex gap-2">
+        <button type="button" onClick={() => go(-1)} aria-label="Previous photo" className={button}>
+          <ChevronLeft className="size-4" aria-hidden="true" />
+        </button>
+        <button type="button" onClick={() => go(1)} aria-label="Next photo" className={button}>
+          <ChevronRight className="size-4" aria-hidden="true" />
+        </button>
+      </div>
     </div>
   )
 }
