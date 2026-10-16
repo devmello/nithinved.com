@@ -13,16 +13,15 @@ export function Work() {
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
-  // Auto-advance pauses while hovered or off screen, and stops for good once someone
-  // handles a slide's media (drags the model, plays the match) so it never yanks it away.
-  const [hovered, setHovered] = useState(false)
+  // Auto-advance pauses only while the carousel is fully off screen, and stops for good once
+  // someone handles a slide's media (drags the model, plays the match) so it never yanks it away.
   const [visible, setVisible] = useState(false)
   const [stopped, setStopped] = useState(false)
 
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
-    const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.4 })
+    const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting))
     io.observe(section)
     return () => io.disconnect()
   }, [])
@@ -56,8 +55,6 @@ export function Work() {
       id="work"
       aria-roledescription="carousel"
       aria-label="Robots"
-      onPointerEnter={(e) => e.pointerType === 'mouse' && setHovered(true)}
-      onPointerLeave={(e) => e.pointerType === 'mouse' && setHovered(false)}
       className="flex flex-col gap-8"
     >
       <div
@@ -112,7 +109,7 @@ export function Work() {
           itemLabel={(i) => robots[i].title}
           duration={stopped ? undefined : SLIDE_MS}
           progress={1}
-          paused={hovered || !visible}
+          paused={!visible}
           onDone={() => goTo(active + 1)}
         />
         <div className="flex gap-2">
