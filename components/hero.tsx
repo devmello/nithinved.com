@@ -9,8 +9,8 @@ export function Hero() {
       >
         <Scramble
           text={[
-            { text: 'I design and build robots' },
-            { text: ' that survive contact.', className: 'text-muted-foreground' },
+            { text: 'Nithin Vedagarbha' },
+            { text: ' Portfolio', className: 'block text-muted-foreground' },
           ]}
         />
       </h1>
