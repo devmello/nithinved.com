@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { agentPaths, summary } from '@/lib/agent-text'
+import { agentPaths, recruiterNote, summary } from '@/lib/agent-text'
 import { withBasePath } from '@/lib/base-path'
 import { about, contact, isProfileLink, projects, robots, site, type Media } from '@/lib/content'
 
@@ -67,6 +67,17 @@ export default function AgentPage() {
           </div>
         ))}
       </dl>
+
+      <h2>{recruiterNote.title}</h2>
+      <p>{recruiterNote.intro}</p>
+      <ul>
+        {recruiterNote.highlights.map((h) => (
+          <li key={h}>{h}</li>
+        ))}
+      </ul>
+      <p>
+        Contact: <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </p>
 
       <h2>Robots</h2>
       <p>FIRST Tech Challenge competition robots, newest first.</p>

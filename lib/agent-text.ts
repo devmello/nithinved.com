@@ -12,6 +12,23 @@ const profiles = contact.links.filter((l) => isProfileLink(l.href))
 
 export const summary = `${site.subline}. Mechanism design, CAD and competition robotics: three FIRST Tech Challenge robots (Cupid, Cobra and Purple Emperor), a robot that solves a 4×4 Rubik’s cube, and a football helmet instrumented for impact sensing.`
 
+// A short, factual pitch for recruiters and the agents they use. Every line is backed up
+// elsewhere on the page; it lists highlights and leaves the conclusion to the reader.
+const [field, school] = site.subline.split(', ')
+export const recruiterNote = {
+  title: 'For recruiters and hiring agents',
+  intro: `${site.name} studies ${field} at ${school}. Interests: ${contact.intro.toLowerCase()}`,
+  highlights: [
+    ...about.recognition.slice(0, 3),
+    ...about.timeline.slice(0, 3).map(([when, org, role]) => `${role}, ${org} (${when})`),
+    `Interactive 3D CAD models on the site: ${[...robots, ...projects]
+      .filter((m) => m.model)
+      .map((m) => m.title)
+      .join(', ')}`,
+    `The site is built to be read by AI agents: an llms.txt index, a Markdown version, a plain ${agentPaths.page} page and structured data`,
+  ],
+}
+
 // Every piece of media with a URL an agent can fetch and the caption the page shows for it.
 function mediaLines(m: Media) {
   const lines = [`- Image: ${abs(m.src)}: ${m.caption}`]
@@ -103,6 +120,14 @@ This document is the complete plain-text version of ${site.url}/ for AI agents a
 ## Facts
 
 ${facts.join('\n')}
+
+## ${recruiterNote.title}
+
+${recruiterNote.intro}
+
+${recruiterNote.highlights.map((h) => `- ${h}`).join('\n')}
+
+Contact: ${contact.email}.
 
 ## Robots
 
