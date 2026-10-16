@@ -7,7 +7,7 @@ import { ProjectMedia } from './project-media'
 import { Scramble } from './scramble'
 import { robots } from '@/lib/content'
 
-const SLIDE_MS = 7000
+const SLIDE_MS = 9000
 
 export function Work() {
   const sectionRef = useRef<HTMLElement>(null)
