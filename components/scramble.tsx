@@ -8,8 +8,8 @@ type Segment = { text: string; className?: string }
 const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 const LOWER = 'abcdefghijklmnopqrstuvwxyz'
 const SYMBOLS = '#*+=<>[]{}~'
-const CHARS_PER_SECOND = 26 // reveal sweep speed, left to right
-const TICK_MS = 38 // how often the unresolved glyphs re-randomise
+const CHARS_PER_SECOND = 55 // reveal sweep speed, left to right
+const TICK_MS = 30 // how often the unresolved glyphs re-randomise
 
 const pick = (set: string) => set.charAt(Math.floor(Math.random() * set.length))
 
@@ -59,7 +59,7 @@ export function Scramble({ text, className }: { text: string | Segment[]; classN
     const reveal = () => {
       cancelAnimationFrame(raf)
       root.dataset.scrambling = ''
-      const duration = Math.min(1500, Math.max(650, (total / CHARS_PER_SECOND) * 1000))
+      const duration = Math.min(800, Math.max(350, (total / CHARS_PER_SECOND) * 1000))
       const start = performance.now()
       let last = -Infinity
       const tick = (now: number) => {
