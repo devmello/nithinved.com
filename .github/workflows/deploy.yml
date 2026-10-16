@@ -29,15 +29,13 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - id: pages
-        uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v5
 
       - run: pnpm install --frozen-lockfile
 
-      # base_path is "/<repo-name>" for a project site and empty for a <user>.github.io site.
+      # nithinved.me serves the site from the domain root, so no base path. (Without the custom
+      # domain it would live at /nithinved.com/ and need NEXT_PUBLIC_BASE_PATH: /nithinved.com.)
       - run: pnpm build
-        env:
-          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
       - uses: actions/upload-pages-artifact@v4
         with:
